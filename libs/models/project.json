@@ -1,0 +1,47 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/models/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/models/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/models"],
+      "options": {
+        "jestConfig": "libs/models/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "migrate-save": {
+      "builder": "@nrwl/workspace:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "npx prisma migrate save --experimental --schema ./src/prisma/prisma.schema",
+        "cwd": "libs/models"
+      }
+    },
+    "migrate-up": {
+      "builder": "@nrwl/workspace:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "npx prisma migrate up --experimental --schema ./src/prisma/prisma.schema",
+        "cwd": "libs/models"
+      }
+    },
+    "gen-client": {
+      "builder": "@nrwl/workspace:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "npx prisma generate --schema ./src/prisma/prisma.schema",
+        "cwd": "libs/models"
+      }
+    }
+  },
+  "tags": []
+}
