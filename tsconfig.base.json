@@ -14,7 +14,10 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@syncit/core/components": ["libs/core/components/src/index.ts"],
+      "@syncit/core/hooks": ["libs/core/hooks/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

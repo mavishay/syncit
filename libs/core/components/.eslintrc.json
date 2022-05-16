@@ -1,18 +1,15 @@
 {
   "extends": [
-    "plugin:@nrwl/nx/react-typescript",
-    "../../.eslintrc.json",
-    "next",
-    "next/core-web-vitals",
+    "plugin:@nrwl/nx/react",
+    "../../../.eslintrc.json",
     "airbnb",
     "airbnb-typescript"
   ],
-  "ignorePatterns": ["!**/*", "tailwind.config.js"],
+  "ignorePatterns": ["!**/*"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@next/next/no-html-link-for-pages": ["error", "apps/web/pages"],
         "react/react-in-jsx-scope": 0,
         "import/no-named-as-default": 0
       }
@@ -25,8 +22,5 @@
       "files": ["*.js", "*.jsx"],
       "rules": {}
     }
-  ],
-  "env": {
-    "jest": true
-  }
+  ]
 }
