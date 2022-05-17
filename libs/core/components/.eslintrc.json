@@ -5,7 +5,7 @@
     "airbnb",
     "airbnb-typescript"
   ],
-  "ignorePatterns": ["!**/*"],
+  "ignorePatterns": ["!**/*", ".storybook/**/*", "src/**/*.stories.*"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
