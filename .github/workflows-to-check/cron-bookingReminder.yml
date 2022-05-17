@@ -1,7 +1,7 @@
 name: Cron - bookingReminder
 
 on:
-  # "Scheduled workflows run on the latest commit on the default or base branch."
+  # "Scheduled workflows-to-check run on the latest commit on the default or base branch."
   # — https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows#schedule
   schedule:
     # Runs “At minute 0, 15, 30, and 45.” (see https://crontab.guru)
