@@ -36,7 +36,7 @@ export function Button({
     className,
   );
   // eslint-disable-next-line react/jsx-props-no-spreading
-  return <button {...rest} className={classes} type="button">{children}</button>;
+  return <button className={classes} type="button" {...rest}>{children}</button>;
 }
 Button.displayName = 'Button';
 export default Button;
