@@ -1,18 +1,10 @@
 {
-  "extends": [
-    "plugin:@nrwl/nx/react",
-    "../../../.eslintrc.json",
-    "airbnb",
-    "airbnb-typescript"
-  ],
-  "ignorePatterns": ["!**/*", ".storybook/**/*", "src/**/*.stories.*"],
+  "extends": ["plugin:@nrwl/nx/react", "../../../.eslintrc.json"],
+  "ignorePatterns": ["!**/*"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {
-        "react/react-in-jsx-scope": 0,
-        "import/no-named-as-default": 0
-      }
+      "rules": {}
     },
     {
       "files": ["*.ts", "*.tsx"],

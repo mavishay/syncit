@@ -19,7 +19,7 @@
       }
     },
     "migrate-save": {
-      "builder": "@nrwl/workspace:run-commands",
+      "executor": "@nrwl/workspace:run-commands",
       "outputs": [],
       "options": {
         "command": "npx prisma migrate save --experimental --schema ./src/prisma/prisma.schema",
@@ -27,7 +27,7 @@
       }
     },
     "migrate-up": {
-      "builder": "@nrwl/workspace:run-commands",
+      "executor": "@nrwl/workspace:run-commands",
       "outputs": [],
       "options": {
         "command": "npx prisma migrate up --experimental --schema ./src/prisma/prisma.schema",
@@ -35,7 +35,7 @@
       }
     },
     "gen-client": {
-      "builder": "@nrwl/workspace:run-commands",
+      "executor": "@nrwl/workspace:run-commands",
       "outputs": [],
       "options": {
         "command": "npx prisma generate --schema ./src/prisma/prisma.schema",

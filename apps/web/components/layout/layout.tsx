@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import Head from 'next/head';
+import { Toast } from '@syncit/core/components';
 
 export interface LayoutProps {
   title: string
@@ -13,7 +14,10 @@ export function Layout({ children, title }: LayoutProps) {
         <title>{title}</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      {children}
+      <div className="min-h-screen bg-gray-100">
+        {children}
+      </div>
+      <Toast />
     </>
   );
 }
