@@ -39,7 +39,7 @@ function Login() {
           Or
           {' '}
           <Link href="/auth/register">
-            <span className="link link-hover">
+            <span className="link link-hover text-primary">
               register new account
             </span>
           </Link>

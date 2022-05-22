@@ -1,12 +1,13 @@
 import { useAuth } from '@syncit/core/hooks';
+import Layout from '../components/layout/layout';
 
 function Index() {
   const { userData } = useAuth();
   return (
-    <h1>
+    <Layout title="Home">
       Welcome to syncit
       {userData?.name}
-    </h1>
+    </Layout>
   );
 }
 export default Index;
