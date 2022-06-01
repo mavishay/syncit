@@ -62,6 +62,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       email: userEmail,
     },
   });
+  delete newUser.password;
 
   setCookie(res, 'token', newUser, { maxAge: 60 * 60 * 60, path: '/' });
   res.setHeader('Access-Control-Allow-Credentials', 'true');

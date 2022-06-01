@@ -3,7 +3,7 @@ const { join } = require("path");
 
 module.exports = {
   content: [
-    join(__dirname, "{pages,components}/**/*!(*.stories|*.spec).{ts,tsx,html}"),
+    join(__dirname, "{pages,components,sections}/**/*!(*.stories|*.spec).{ts,tsx,html}"),
     ...createGlobPatternsForDependencies(__dirname)
   ],
   theme: {

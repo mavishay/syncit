@@ -6,8 +6,9 @@ function Index() {
   return (
     <Layout title="Home">
       Welcome to syncit
-      {userData?.name}
+      <div>{JSON.stringify(userData)}</div>
     </Layout>
   );
 }
+
 export default Index;

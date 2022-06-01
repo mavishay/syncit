@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import Head from 'next/head';
 import { Toast } from '@syncit/core/components';
 import { useRouter } from 'next/router';
+import LeftBar from '../../sections/left-bar/left-bar';
 
 export interface LayoutProps {
   title: string
@@ -25,13 +26,7 @@ export function Layout({ children, title }: LayoutProps) {
               <div className="drawer-content flex flex-col items-center justify-center">
                 {children}
               </div>
-              <div className="drawer-side shadow-lg">
-                <ul className="menu p-4 overflow-y-auto w-60 bg-base-100 text-base-content">
-                  <li>Sidebar Item 1</li>
-                  <li>Sidebar Item 2</li>
-                </ul>
-              </div>
-
+              <LeftBar />
             </div>
           )
           : children}

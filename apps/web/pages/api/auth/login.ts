@@ -30,6 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (existingUser) {
     const verified = await verifyPassword(password, existingUser.password);
     if (verified) {
+      delete existingUser.password;
       setCookie(res, 'token', existingUser, { maxAge: 60 * 60 * 60, path: '/' });
       res.setHeader('Access-Control-Allow-Credentials', 'true');
       res.end(res.getHeader('Set-Cookie'));
