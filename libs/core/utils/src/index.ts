@@ -1,3 +1,6 @@
 export * from './lib/slugify'
 export * from './lib/object'
 export * from './lib/auth'
+export * from './lib/googleAuth'
+export * from './lib/errorsHandlers'
+export * from './lib/events'
