@@ -5,6 +5,7 @@
     "core-components": "libs/core/components",
     "core-hooks": "libs/core/hooks",
     "core-utils": "libs/core/utils",
+    "integrations": "libs/integrations",
     "models": "libs/models",
     "web": "apps/web",
     "web-e2e": "apps/web-e2e"

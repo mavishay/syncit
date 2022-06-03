@@ -18,6 +18,7 @@
       "@syncit/core/components": ["libs/core/components/src/index.ts"],
       "@syncit/core/hooks": ["libs/core/hooks/src/index.ts"],
       "@syncit/core/utils": ["libs/core/utils/src/index.ts"],
+      "@syncit/integrations": ["libs/integrations/src/index.ts"],
       "@syncit/models": ["libs/models/src/index.ts"]
     }
   },
