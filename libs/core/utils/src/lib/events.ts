@@ -1,8 +1,10 @@
-/* eslint-disable array-callback-return,consistent-return,@typescript-eslint/ban-ts-comment */
-import { CalendarEvent, Person, WEBAPP_URL } from '@syncit/integrations';
+/* eslint-disable array-callback-return,consistent-return,@typescript-eslint/ban-ts-comment,import/no-relative-packages */
 import * as short from "short-uuid";
 import { v5 as uuidv5 } from "uuid";
+import { CalendarEvent, Person } from "../../../../../types/google_calendar";
 
+// @ts-ignore
+export const WEBAPP_URL = process.env.NEXT_PUBLIC_WEBAPP_URL || `https://${process.env.VERCEL_URL}`;
 const translator = short();
 
 export const getWhat = (calEvent: CalendarEvent) => `

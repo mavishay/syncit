@@ -1,9 +1,15 @@
 /* eslint-disable @typescript-eslint/naming-convention,import/no-extraneous-dependencies,@typescript-eslint/no-shadow,no-async-promise-executor,import/prefer-default-export */
 import { Credential, Prisma, PrismaClient } from "@prisma/client";
-import { GetTokenResponse } from "google-auth-library/build/src/auth/oauth2client";
+import { getLocation, getRichDescription, HttpError } from "@syncit/core/utils";
 import { Auth, calendar_v3, google } from "googleapis";
-import { getLocation, getRichDescription, HttpError, MyGoogleAuth } from "@syncit/core/utils";
-import type { CalendarEvent, EventBusyDate, GoogleCalError, IntegrationCalendar, NewCalendarEventType } from "./types";
+import {
+  CalendarEvent,
+  EventBusyDate,
+  GetTokenResponse,
+  GoogleCalError,
+  IntegrationCalendar,
+  NewCalendarEventType
+} from "../../../../types/google_calendar";
 
 const prisma = new PrismaClient();
 
@@ -12,7 +18,7 @@ export class GoogleCalendarService {
 
   private integrationName = "";
 
-  private auth: Promise<{ getToken: () => Promise<MyGoogleAuth> }>;
+  private auth: Promise<{ getToken: () => Promise<Auth.OAuth2Client> }>;
 
   private client_id = "";
 
@@ -23,6 +29,101 @@ export class GoogleCalendarService {
   constructor(credential: Credential) {
     this.integrationName = "google_calendar";
     this.auth = this.googleAuth(credential).then((m) => m);
+  }
+
+  async listCalendars(): Promise<IntegrationCalendar[]> {
+    return new Promise(async (resolve, reject) => {
+      const auth = await this.auth;
+      const myGoogleAuth = await auth.getToken();
+      const calendar = google.calendar({
+        version: "v3",
+        auth: myGoogleAuth
+      });
+
+      calendar.calendarList
+        .list()
+        .then((cals) => {
+          resolve(
+            cals.data.items?.map((cal) => {
+              const calendar: any = {
+                externalId: cal.id ?? "No id",
+                integration: this.integrationName,
+                name: cal.summary ?? "No name",
+                primary: cal.primary ?? false
+              };
+              return calendar;
+            }) || []
+          );
+        })
+        .catch((err: Error) => {
+          console.error("There was an error contacting google calendar service: ", err);
+          reject(err);
+        });
+    });
+  }
+
+  async getAvailability(
+    dateFrom: string,
+    dateTo: string,
+    selectedCalendars: IntegrationCalendar[]
+  ): Promise<EventBusyDate[]> {
+    return new Promise(async (resolve, reject) => {
+      const auth = await this.auth;
+      const myGoogleAuth = await auth.getToken();
+      const calendar = google.calendar({
+        version: "v3",
+        auth: myGoogleAuth
+      });
+      const selectedCalendarIds = selectedCalendars
+        .filter((e: any) => e.integration === this.integrationName)
+        .map((e: any) => e.externalId);
+      if (selectedCalendarIds.length === 0 && selectedCalendars.length > 0) {
+        // Only calendars of other integrations selected
+        resolve([]);
+        return;
+      }
+
+      (selectedCalendarIds.length === 0
+          ? calendar.calendarList
+            .list()
+            .then((cals) => cals.data.items?.map((cal) => cal.id).filter(Boolean) || [])
+          : Promise.resolve(selectedCalendarIds)
+      )
+        .then((calsIds) => {
+          calendar.freebusy.query(
+            {
+              requestBody: {
+                timeMin: dateFrom,
+                timeMax: dateTo,
+                items: calsIds.map((id) => ({ id }))
+              }
+            },
+            (err, apires) => {
+              if (err) {
+                reject(err);
+              }
+              let result: any = [];
+
+              if (apires?.data.calendars) {
+                result = Object.values(apires.data.calendars).reduce((c: any, i: any) => {
+                  i.busy?.forEach((busyTime) => {
+                    c.push({
+                      start: busyTime.start || "",
+                      end: busyTime.end || ""
+                    });
+                  });
+                  return c;
+                }, [] as typeof result);
+              }
+              resolve(result);
+            }
+          );
+        })
+        .catch((err) => {
+          console.error("There was an error contacting google calendar service: ", err);
+          reject(err);
+        });
+    });
   }
 
   async createEvent(calEventRaw: CalendarEvent): Promise<NewCalendarEventType> {
@@ -188,101 +289,6 @@ export class GoogleCalendarService {
     });
   }
 
-  async getAvailability(
-    dateFrom: string,
-    dateTo: string,
-    selectedCalendars: IntegrationCalendar[]
-  ): Promise<EventBusyDate[]> {
-    return new Promise(async (resolve, reject) => {
-      const auth = await this.auth;
-      const myGoogleAuth = await auth.getToken();
-      const calendar = google.calendar({
-        version: "v3",
-        auth: myGoogleAuth
-      });
-      const selectedCalendarIds = selectedCalendars
-        .filter((e: any) => e.integration === this.integrationName)
-        .map((e: any) => e.externalId);
-      if (selectedCalendarIds.length === 0 && selectedCalendars.length > 0) {
-        // Only calendars of other integrations selected
-        resolve([]);
-        return;
-      }
-
-      (selectedCalendarIds.length === 0
-          ? calendar.calendarList
-            .list()
-            .then((cals) => cals.data.items?.map((cal) => cal.id).filter(Boolean) || [])
-          : Promise.resolve(selectedCalendarIds)
-      )
-        .then((calsIds) => {
-          calendar.freebusy.query(
-            {
-              requestBody: {
-                timeMin: dateFrom,
-                timeMax: dateTo,
-                items: calsIds.map((id) => ({ id }))
-              }
-            },
-            (err, apires) => {
-              if (err) {
-                reject(err);
-              }
-              let result: any = [];
-
-              if (apires?.data.calendars) {
-                result = Object.values(apires.data.calendars).reduce((c: any, i: any) => {
-                  i.busy?.forEach((busyTime) => {
-                    c.push({
-                      start: busyTime.start || "",
-                      end: busyTime.end || ""
-                    });
-                  });
-                  return c;
-                }, [] as typeof result);
-              }
-              resolve(result);
-            }
-          );
-        })
-        .catch((err) => {
-          console.error("There was an error contacting google calendar service: ", err);
-          reject(err);
-        });
-    });
-  }
-
-  async listCalendars(): Promise<IntegrationCalendar[]> {
-    return new Promise(async (resolve, reject) => {
-      const auth = await this.auth;
-      const myGoogleAuth = await auth.getToken();
-      const calendar = google.calendar({
-        version: "v3",
-        auth: myGoogleAuth
-      });
-
-      calendar.calendarList
-        .list()
-        .then((cals) => {
-          resolve(
-            cals.data.items?.map((cal) => {
-              const calendar: any = {
-                externalId: cal.id ?? "No id",
-                integration: this.integrationName,
-                name: cal.summary ?? "No name",
-                primary: cal.primary ?? false
-              };
-              return calendar;
-            }) || []
-          );
-        })
-        .catch((err: Error) => {
-          console.error("There was an error contacting google calendar service: ", err);
-          reject(err);
-        });
-    });
-  }
-
   private googleAuth = async ({ id, key }: Credential) => {
     const { client_id, client_secret, redirect_uris } = JSON.parse(process.env.GOOGLE_API_CREDENTIALS).web;
     if (typeof client_id === "string") this.client_id = client_id;
@@ -295,12 +301,11 @@ export class GoogleCalendarService {
       throw new HttpError({ statusCode: 400, message: "Google client_secret missing." });
     if (!this.redirect_uri) throw new HttpError({ statusCode: 400, message: "Google redirect_uri missing." });
 
-    const myGoogleAuth = new MyGoogleAuth(this.client_id, this.client_secret, this.redirect_uri);
+    const myGoogleAuth = new Auth.OAuth2Client(this.client_id, this.client_secret, this.redirect_uri);
 
     const googleCredentials = key as Auth.Credentials;
     myGoogleAuth.setCredentials(googleCredentials);
-
-    const isExpired = () => myGoogleAuth.isTokenExpiring();
+    const isExpired = () => googleCredentials.expiry_date < new Date().getTime();
 
     const refreshAccessToken = () =>
       myGoogleAuth
@@ -329,4 +334,5 @@ export class GoogleCalendarService {
       getToken: () => (!isExpired() ? Promise.resolve(myGoogleAuth) : refreshAccessToken())
     };
   };
+
 }

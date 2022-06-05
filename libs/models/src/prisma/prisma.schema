@@ -23,8 +23,10 @@ model User {
 model Credential {
   id     Int     @id @default(autoincrement())
   type   String
+  account   String?
   key    Json
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int?
   appId  String?
+  @@unique([userId, account])
 }
