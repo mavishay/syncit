@@ -7,7 +7,7 @@ export const redis = new Redis();
 
 export const getSessionIdFromUserData = async (userData: User) => {
   const sessionID = uuidv4();
-  await redis.set(sessionID, b64Encode(JSON.stringify(userData)));
+  await redis.set(sessionID, b64Encode(JSON.stringify(userData)),'EX', 60 * 60 * 24);
   return sessionID as string;
 };
 

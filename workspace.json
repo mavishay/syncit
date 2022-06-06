@@ -2,6 +2,7 @@
   "$schema": "./node_modules/nx/schemas/workspace-schema.json",
   "version": 2,
   "projects": {
+    "be": "apps/be",
     "core-components": "libs/core/components",
     "core-hooks": "libs/core/hooks",
     "core-store": "libs/core/store",

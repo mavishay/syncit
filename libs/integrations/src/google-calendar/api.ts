@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention,consistent-return,@typescript-eslint/ban-ts-comment */
 import { google } from "googleapis";
 import { NextApiRequest, NextApiResponse } from "next";
-import { b64Decode } from "@syncit/core/utils";
+import { b64Decode, getUserDataFromSessionId } from "@syncit/core/utils";
 import { PrismaClient } from "@prisma/client";
 import { GoogleCalendarService } from "./service";
 
@@ -24,7 +24,8 @@ export const add = async (req: NextApiRequest, res: NextApiResponse) => {
     // Get token from Google Calendar API
     if (!client_id) return res.status(400).json({ message: "Google client_id missing." });
     if (!client_secret) return res.status(400).json({ message: "Google client_secret missing." });
-    if (!req.cookies?.token) {
+    const userData = await getUserDataFromSessionId(req.cookies.sessionID);
+    if (!userData?.id) {
       return res.status(401).json({ message: "You must be logged in to do this" });
     }
     const redirect_uri = `${WEBAPP_URL}/api/integrations/google_calendar/callback`;
@@ -49,10 +50,8 @@ export const callback = async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(400).json({ message: "`code` must be a string" });
     return;
   }
-  if (!req.cookies?.token) {
-    return res.status(401).json({ message: "You must be logged in to do this" });
-  }
-  const userData: any = JSON.parse(b64Decode(req.cookies?.token));
+  const userData = await getUserDataFromSessionId(req.cookies.sessionID);
+
   if (!userData?.id) {
     return res.status(401).json({ message: "You must be logged in to do this" });
   }
@@ -96,5 +95,5 @@ export const callback = async (req: NextApiRequest, res: NextApiResponse) => {
   });
   const state: IntegrationOAuthCallbackState = typeof req.query.state !== "string" ? undefined : JSON.parse(req.query.state as string);
 
-  res.redirect(state?.returnTo ?? "/");
+  res.redirect(state?.returnTo ?? "/settings/calendars");
 };

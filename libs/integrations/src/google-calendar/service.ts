@@ -305,34 +305,36 @@ export class GoogleCalendarService {
 
     const googleCredentials = key as Auth.Credentials;
     myGoogleAuth.setCredentials(googleCredentials);
-    const isExpired = () => googleCredentials.expiry_date < new Date().getTime();
+    return { getToken: () => Promise.resolve(myGoogleAuth) }
 
-    const refreshAccessToken = () =>
-      myGoogleAuth
-        .refreshToken(googleCredentials.refresh_token)
-        .then(async (res: GetTokenResponse) => {
-          const token = res.res?.data;
-          googleCredentials.access_token = token.access_token;
-          googleCredentials.expiry_date = token.expiry_date;
-          await prisma.credential.update({
-            where: {
-              id
-            },
-            data: {
-              key: googleCredentials as Prisma.InputJsonValue
-            }
-          });
-          myGoogleAuth.setCredentials(googleCredentials);
-          return myGoogleAuth;
-        })
-        .catch((err) => {
-          console.error("Error refreshing google token", err);
-          return myGoogleAuth;
-        });
-
-    return {
-      getToken: () => (!isExpired() ? Promise.resolve(myGoogleAuth) : refreshAccessToken())
-    };
+    // const isExpired = () => googleCredentials.expiry_date < new Date().getTime();
+    //
+    // const refreshAccessToken = () =>
+    //   myGoogleAuth
+    //     .refreshToken(googleCredentials.refresh_token)
+    //     .then(async (res: GetTokenResponse) => {
+    //       const token = res.res?.data;
+    //       googleCredentials.access_token = token.access_token;
+    //       googleCredentials.expiry_date = token.expiry_date;
+    //       await prisma.credential.update({
+    //         where: {
+    //           id
+    //         },
+    //         data: {
+    //           key: googleCredentials as Prisma.InputJsonValue
+    //         }
+    //       });
+    //       myGoogleAuth.setCredentials(googleCredentials);
+    //       return myGoogleAuth;
+    //     })
+    //     .catch((err) => {
+    //       console.error("Error refreshing google token", err);
+    //       return myGoogleAuth;
+    //     });
+    //
+    // return {
+    //   getToken: () => (!isExpired() ? Promise.resolve(myGoogleAuth) : refreshAccessToken())
+    // };
   };
 
 }

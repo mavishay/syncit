@@ -1,19 +1,43 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import http from 'axios';
-import { useAuth } from '@syncit/core/hooks';
 import { Icon } from '@syncit/core/components';
 import Layout from '../../components/layout/layout';
 
 function Calendars() {
   const [calendarsList, setCalendarsList] = useState([]);
+
+  const getCalendars = useCallback(async () => {
+    await http.get('/api/calendars/availableCalendars').then(({ data }) => {
+      setCalendarsList(data?.list);
+    });
+  }, []);
+
   useEffect(() => {
-    http.get('/api/calendars/availableCalendars').then(({ data }) => { setCalendarsList(data?.list); });
+    getCalendars();
+  }, []);
+
+  const authGoogle = useCallback(async () => {
+    const res = await http.get('/api/integrations/google_calendar/add');
+
+    if (!res.status === '200') {
+      throw new Error('Something went wrong');
+    }
+
+    window.location.href = res.data.url;
+  }, []);
+
+  const deleteCredential = useCallback(async (credId) => {
+    await http.delete(`/api/integrations/google_calendar/delete/${credId}`);
+    getCalendars();
   }, []);
 
   return (
     <Layout title="Setting - Calendars">
       <div className="min-w-full p-10">
-        <h3 className="font-bold text-2xl">Calendars List</h3>
+        <div className="flex justify-between">
+          <h3 className="font-bold text-2xl">Calendars List</h3>
+          <label htmlFor="add-modal" className="btn btn-sm modal-button btn-outline">+</label>
+        </div>
         <p className="pt-2 pb-5">Description will appear here</p>
         <div className="flex flex-col gap-5">
           {calendarsList.map((account) => (
@@ -24,7 +48,7 @@ function Calendars() {
                     <Icon name={account.type} width={40} height={40} />
                     {account.name}
                   </h2>
-                  <button type="button" className="btn btn-sm btn-link text-xs">Disconnect</button>
+                  <button type="button" className="btn btn-sm btn-link text-xs" onClick={() => deleteCredential(account.id)}>Disconnect</button>
                 </div>
                 <div className="divider m-0" />
                 <div>
@@ -38,14 +62,19 @@ function Calendars() {
               </div>
             </div>
           ))}
-          {/*  <div key={`${calendar.externalId}-${key}`}> */}
-          {/*    <div className="w-100 flex justify-between"> */}
-          {/*      <div>{calendar.name}</div> */}
-          {/*      <input type="checkbox" className="toggle" /> */}
-          {/*    </div> */}
-          {/*    <div className="divider" /> */}
-          {/*  </div> */}
-          {/* ))} */}
+        </div>
+      </div>
+      <input type="checkbox" id="add-modal" className="modal-toggle" />
+      <div className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Add integration</h3>
+          <div className="py-4 flex items-center gap-5 cursor-pointer hover:text-primary hover:shadow-lg" onClick={authGoogle}>
+            <Icon name="google_calendar" width={40} height={40} />
+            Google Calendar
+          </div>
+          <div className="modal-action">
+            <label htmlFor="add-modal" className="btn btn-sm btn-outline">Close</label>
+          </div>
         </div>
       </div>
     </Layout>
