@@ -23,7 +23,7 @@ export function Layout({ children, title }: LayoutProps) {
           ? (
             <div className="drawer drawer-mobile">
               <input id="drawer" type="checkbox" className="drawer-toggle" />
-              <div className="drawer-content flex flex-col items-center justify-center">
+              <div className="drawer-content">
                 {children}
               </div>
               <LeftBar />

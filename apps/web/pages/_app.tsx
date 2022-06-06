@@ -12,7 +12,6 @@ function CustomApp({ Component, pageProps }: AppProps) {
     const checkLoggedIn = async () => {
       if (router.pathname.search('/auth') === -1) {
         const approved = await isLoggedIn();
-        console.warn({ approved });
         if (!approved) {
           router.replace('/auth/login');
         }

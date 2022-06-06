@@ -1,4 +1,8 @@
 import { useAuth } from '@syncit/core/hooks';
+import Link from 'next/link';
+import {
+  CalendarIcon,
+} from '@heroicons/react/solid';
 
 export function LeftBar() {
   const { userData } = useAuth();
@@ -8,10 +12,21 @@ export function LeftBar() {
       <div className="drawer-side w-60 shadow-lg  p-4 bg-base-100">
         <div className="flex flex-col overflow-y-auto justify-between">
           <div>
-            <h3 className="text-3xl font-bold mb-2">Cal Sync</h3>
-            <ul className="menu">
-              <li>Sidebar Item 1</li>
-              <li>Sidebar Item 2</li>
+            <h3 className="text-3xl font-bold mb-2">
+              <Link href="/">Cal Sync</Link>
+            </h3>
+            <ul className="menu pt-3">
+              <li>
+                <Link href="/settings/calendars">
+                  <div className="flex px-0">
+                    <CalendarIcon
+                      className="h-5 w-5 flex-shrink-0"
+                      aria-hidden="true"
+                    />
+                    Calendars List
+                  </div>
+                </Link>
+              </li>
             </ul>
           </div>
           <div className="flex items-center cursor-pointer">

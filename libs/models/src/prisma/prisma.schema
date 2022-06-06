@@ -17,7 +17,7 @@ model User {
   created  DateTime @default(now())
   theme    String?  @default("light")
   credentials Credential[]
-
+  selectedCalendars    SelectedCalendar[]
 }
 
 model Credential {
@@ -29,4 +29,12 @@ model Credential {
   userId Int?
   appId  String?
   @@unique([userId, account])
+}
+
+model SelectedCalendar {
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  integration String
+  externalId  String
+  @@id([userId, integration, externalId])
 }
