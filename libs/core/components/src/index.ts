@@ -1,3 +1,5 @@
+/* eslint-disable import/extensions */
 export * from './lib/icon/icon'
-// eslint-disable-next-line import/extensions
+export * from './lib/auth-guard/authGuard'
+export * from './lib/loader/loader'
 export * from './lib/toast/toast'

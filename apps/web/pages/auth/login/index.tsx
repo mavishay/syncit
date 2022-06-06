@@ -25,7 +25,7 @@ function Login() {
   const onSubmit = useCallback(async (data) => {
     try {
       await http.post('/api/auth/login', { ...data });
-      router.push('/');
+      window.location.href = '/';
     } catch (e) {
       toast({ color: 'error', text: e?.response?.data?.message });
     }

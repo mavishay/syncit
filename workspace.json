@@ -4,6 +4,7 @@
   "projects": {
     "core-components": "libs/core/components",
     "core-hooks": "libs/core/hooks",
+    "core-store": "libs/core/store",
     "core-utils": "libs/core/utils",
     "integrations": "libs/integrations",
     "models": "libs/models",

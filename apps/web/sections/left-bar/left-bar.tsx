@@ -1,14 +1,15 @@
-import { useAuth } from '@syncit/core/hooks';
 import Link from 'next/link';
 import {
   CalendarIcon,
 } from '@heroicons/react/solid';
+import { useRecoilValue } from 'recoil';
+import { userDataState } from '@syncit/core/store';
+import { User } from '@prisma/client';
 
 export function LeftBar() {
-  const { userData } = useAuth();
-  // const initials =
+  const userData:User = useRecoilValue(userDataState);
   return (
-    userData ? (
+    userData.name ? (
       <div className="drawer-side w-60 shadow-lg  p-4 bg-base-100">
         <div className="flex flex-col overflow-y-auto justify-between">
           <div>

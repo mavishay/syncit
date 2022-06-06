@@ -5,3 +5,4 @@ export * from "./lib/object";
 export * from "./lib/auth";
 export * from "./lib/errorsHandlers";
 export * from "./lib/events";
+export * from "./lib/redis";

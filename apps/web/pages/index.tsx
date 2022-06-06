@@ -1,9 +1,11 @@
-import { useAuth } from '@syncit/core/hooks';
 import { useCallback } from 'react';
+import { useRecoilValue } from 'recoil';
+import { userDataState } from '@syncit/core/store';
 import Layout from '../components/layout/layout';
 
 function Index() {
-  const { userData } = useAuth();
+  const userData = useRecoilValue(userDataState);
+
   const authGoogle = useCallback(async () => {
     const res = await fetch('/api/integrations/google_calendar/add');
 

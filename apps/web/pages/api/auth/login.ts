@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
-import { setCookie, verifyPassword } from '@syncit/core/utils';
+import {
+  getSessionIdFromUserData, setCookie, verifyPassword,
+} from '@syncit/core/utils';
 
 const prisma = new PrismaClient();
 
@@ -31,8 +33,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const verified = await verifyPassword(password, existingUser.password);
     if (verified) {
       delete existingUser.password;
-      setCookie(res, 'token', existingUser, { maxAge: 1000 * 60 * 60, path: '/', httpOnly: true });
-      setCookie(res, 'authed', true, { maxAge: 1000 * 60 * 60, path: '/' });
+      const sessionID = await getSessionIdFromUserData(existingUser);
+      setCookie(res, 'sessionID', sessionID, { maxAge: 1000 * 60 * 60, path: '/', httpOnly: true });
       res.setHeader('Access-Control-Allow-Credentials', 'true');
       res.end(res.getHeader('Set-Cookie'));
       return;
