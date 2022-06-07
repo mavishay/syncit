@@ -5,6 +5,15 @@ import { userDataState } from "@syncit/core/store";
 import { useSetRecoilState } from "recoil";
 import Loader from "../loader/loader";
 
+http.interceptors.response.use(res => res, err => {
+    const statusCode = err.response.status;
+    if (statusCode === 401 || statusCode === 403) {
+      window.location.href = "/auth/login";
+    }
+    throw err;
+  }
+);
+
 interface IAuthGuard {
   children: ReactNode;
 }
@@ -19,14 +28,12 @@ export const AuthGuard = ({ children }: IAuthGuard) => {
     , [router.pathname]);
 
   const getUserData = useCallback(async () => {
-    try {
+    if(!isAuthRoute) {
       const { data } = await http.get("/api/auth/me");
       setUserData(data.userData);
       setLoading(false);
-    } catch (e) {
-      router.push("/auth/login");
     }
-  }, []);
+  }, [isAuthRoute]);
 
   useEffect(() => {
     getUserData();

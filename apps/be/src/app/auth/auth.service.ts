@@ -107,7 +107,7 @@ export class AuthService {
   }
 
   async me(req, res) {
-    const userData = await getUserDataFromSessionId(req.cookies.sessionID);
+    const { userData } = res.locals;
     if (userData?.id) {
       res.json({ userData });
       return;

@@ -31,6 +31,14 @@ function Calendars() {
     getCalendars();
   }, []);
 
+  const calendarToggleChange = useCallback(async (integration, externalId, checked) => {
+    if (checked) {
+      await http.post('/api/calendars/availableCalendars', { integration, externalId });
+    } else {
+      await http.delete('/api/calendars/availableCalendars', { data: { integration, externalId } });
+    }
+  }, []);
+
   return (
     <Layout title="Setting - Calendars">
       <div className="min-w-full p-10">
@@ -48,13 +56,28 @@ function Calendars() {
                     <Icon name={account.type} width={40} height={40} />
                     {account.name}
                   </h2>
-                  <button type="button" className="btn btn-sm btn-link text-xs" onClick={() => deleteCredential(account.id)}>Disconnect</button>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-link text-xs"
+                    onClick={() => deleteCredential(account.id)}
+                  >
+                    Disconnect
+                  </button>
                 </div>
                 <div className="divider m-0" />
                 <div>
                   {account.calendars.map((calendar) => (
                     <div className="flex items-center gap-4 mb-3">
-                      <input type="checkbox" className="toggle" />
+                      <input
+                        type="checkbox"
+                        className="toggle"
+                        defaultChecked={calendar.enabled}
+                        onChange={(e) => calendarToggleChange(
+                          account.type,
+                          calendar.externalId,
+                          e.target.checked,
+                        )}
+                      />
                       {calendar.name}
                     </div>
                   ))}
@@ -68,7 +91,10 @@ function Calendars() {
       <div className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Add integration</h3>
-          <div className="py-4 flex items-center gap-5 cursor-pointer hover:text-primary hover:shadow-lg" onClick={authGoogle}>
+          <div
+            className="py-4 flex items-center gap-5 cursor-pointer hover:text-primary hover:shadow-lg"
+            onClick={authGoogle}
+          >
             <Icon name="google_calendar" width={40} height={40} />
             Google Calendar
           </div>

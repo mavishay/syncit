@@ -15,16 +15,14 @@ export class IntegrationsController {
 
   @Delete(":integration/:actions/:credId")
   async integrationsDelete(@Param() params, @Req() request, @Res() response) {
-    console.warn(params.credId );
     const userData = await getUserDataFromSessionId(request.cookies.sessionID);
-    const test = await prisma.credential.deleteMany({
+    await prisma.credential.deleteMany({
       where: {
         type: params.integration,
         userId: userData.id,
         id: parseFloat(params.credId)
       }
     });
-    console.warn({test});
     response.status(200).send('ok')
   }
 }

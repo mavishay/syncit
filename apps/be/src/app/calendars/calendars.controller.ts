@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res } from "@nestjs/common";
+import { Controller, Delete, Get, Post, Req, Res } from "@nestjs/common";
 
 import { CalendarsService } from "./calendars.service";
 
@@ -8,7 +8,17 @@ export class CalendarsController {
   }
 
   @Get("availableCalendars")
-  async me(@Req() request: Request, @Res() response: Response) {
+  async availableCalendars(@Req() request: Request, @Res() response: Response) {
     return this.calendarsService.availableCalendars(request, response);
+  }
+
+  @Post("availableCalendars")
+  async addSelectedCalendar(@Req() request: Request, @Res() response: Response) {
+    return this.calendarsService.addSelectedCalendar(request, response);
+  }
+
+  @Delete("availableCalendars")
+  async deleteSelectedCalendar(@Req() request: Request, @Res() response: Response) {
+    return this.calendarsService.deleteSelectedCalendar(request, response);
   }
 }
